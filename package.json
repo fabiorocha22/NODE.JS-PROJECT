@@ -1,0 +1,28 @@
+{
+  "name": "docker_web_app",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "Fabio Rocha",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mysql2": "^2.1.0",
+    "sequelize": "v5.22.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabiorocha22/NODE.JS-PROJECT.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fabiorocha22/NODE.JS-PROJECT/issues"
+  },
+  "homepage": "https://github.com/fabiorocha22/NODE.JS-PROJECT#readme",
+  "devDependencies": {
+    "sequelize-cli": "^6.0.0"
+  }
+}
