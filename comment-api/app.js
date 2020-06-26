@@ -15,7 +15,8 @@ app.get('/', (req, res) => {
 const routes = require('./app/routes/api');
 app.use('/api', routes);
 
-let port = 18091;
+// let port = 18091;
+let port = 8080;
 let host = 'localhost';
 
 app.listen(port, host, () => {

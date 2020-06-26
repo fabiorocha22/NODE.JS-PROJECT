@@ -4,9 +4,8 @@ exports.test = (req, res) => {
     res.send('Olá! Teste ao Controller');
 };
 
-exports.getLastComment = async (req, res) => {
+exports.getAllComment = async (req, res) => {
     const lastComment = await comment.findAll({
-        limit: 1,
         order: [['createdAt', 'DESC']]
     })
     res.json(lastComment)
