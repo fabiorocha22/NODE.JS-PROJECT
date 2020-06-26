@@ -10,8 +10,10 @@ Foi utilizado o Sequelize como ORM para manipular o banco de dados e o Express p
 
 Para executar basta rodar os seguintes comandos:
 
-$ npm install
-$ npm run start
+npm install
+npm run start
+
+----------------------------------------------------------------------------------------------------------
 
 WEB PAGE:
 
@@ -19,8 +21,8 @@ Foi desenvolvida em Angular.JS onde foram feitas as chamadas Ajax à API.
 
 Para executar basta rodar os seguintes comandos:
 
-$ npm install
-$ npm run start
+npm install
+npm run start
 
 ----------------------------------------------------------------------------------------------------------
 
@@ -30,10 +32,12 @@ Por isso, ambos tem seus Dockerfile's e podem ser instanciados.
 
 Basta rodar os seguintes comandos:
 
-$ docker build .
-$ docker run
-$ docker ps (pegar o ID do container)
-$ docker port {ID DO CONTAINER} -----> para saber em qual porta do host o container esta
+docker build .
+docker run
+docker ps (pegar o ID do container)
+docker port {ID DO CONTAINER} -----> para saber em qual porta do host o container esta
+
+----------------------------------------------------------------------------------------------------------
 
 Estou disponível para resolver bugs ou tirar duvidas!
 
