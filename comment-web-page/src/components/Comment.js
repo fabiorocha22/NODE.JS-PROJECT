@@ -14,9 +14,10 @@ export default class Comment extends Component {
         }
 
         this.saveComment = this.saveComment.bind(this);
+        this.listen = this.listen.bind(this);
     }
 
-    listen() {
+    listen(value) {
         const fs = require('fs');
         const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
         const { IamAuthenticator } = require('ibm-watson/auth');
@@ -30,7 +31,7 @@ export default class Comment extends Component {
         });
 
         const synthesizeParams = {
-            text: 'Hello world',
+            text: value,
             accept: 'audio/wav',
             voice: 'en-US_AllisonV3Voice',
         };
@@ -97,7 +98,7 @@ export default class Comment extends Component {
                     <input id='new_comment' type="text" style={{ width: '100%', height: '100%', display: 'block' }} onChange={(event) => { this.setState({ comment: event.target.value }) }}></input>
                 </div>
                 <div style={{ width: '100%', display: 'block' }}>
-                    <input type='button' value="Cadastrar" style={{ display: 'block' }} onClick={this.saveComment}></input>
+                    <input type='button' value="Cadastrar" style={{ display: 'block' }} onClick={this.saveComment(event.target.value)}></input>
                 </div>
                 <div style={{ minWidth: '100%', display: 'inline-grid' }}>
                     <MaterialTable
