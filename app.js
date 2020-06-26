@@ -1,11 +1,12 @@
 const express = require('express');
-const { comment } = require('./app/models');
-
-console.log(comment)
-
-comment.create({ comment: "Estou só testando pai" });
+const bodyParser = require('body-parser');
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded(
+    { extended: true }
+));
 
 app.get('/', (req, res) => {
     res.send(401, 'END POINT INVÁLIDO!');
