@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
 import $ from 'jquery'
 import MaterialTable from 'material-table'
-const cors  = require('cors')
+import axios from 'axios'
+
+const getAudioContext = () => {
+    AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioContent = new AudioContext();
+    return audioContent;
+};
 
 export default class Comment extends Component {
 
@@ -13,71 +19,75 @@ export default class Comment extends Component {
             values: []
         }
 
+        $.ajax({
+            url: 'https://mwau850imi.execute-api.sa-east-1.amazonaws.com/dev/getcomment',
+            type: 'GET',
+            crossDomain: true,
+            success: (success) => {
+                console.log(success)
+                if (success.length > 0) {
+                    success.forEach(element => {
+                        element.listen = <button onClick={(e) => { this.listen(element.comment) }}>&#x266A;</button>
+                    });
+                    this.setState({
+                        values: success
+                    })
+                }
+            },
+            error: (err) => {
+                console.error(err)
+            }
+        })
+
         this.saveComment = this.saveComment.bind(this);
         this.listen = this.listen.bind(this);
     }
 
-    listen(value) {
-        const fs = require('fs');
-        const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
-        const { IamAuthenticator } = require('ibm-watson/auth');
+    async listen(value) {
+        const response = await axios.post('https://mwau850imi.execute-api.sa-east-1.amazonaws.com/dev/speech', 
+            { value }, { responseType: 'text' });
 
-        const textToSpeech = new TextToSpeechV1({
-            authenticator: new IamAuthenticator({
-                apikey: 'WD4AFtckuzKn_GGwcq6owpphCXSvpDMTm_c9CFzr1gkd',
-            }),
-            crossDomain: true,
-            url: 'https://api.us-south.text-to-speech.watson.cloud.ibm.com',
-        });
+        const base64_arraybuffer = require('base64-arraybuffer')
+        const array_buffer = base64_arraybuffer.decode(response.data.data)
 
-        const synthesizeParams = {
-            text: value,
-            accept: 'audio/wav',
-            voice: 'en-US_AllisonV3Voice',
-        };
+        const audioContext = getAudioContext();
+        const audioBuffer = await audioContext.decodeAudioData(array_buffer);
 
-        textToSpeech.synthesize(synthesizeParams)
-            .then(response => {
-                // only necessary for wav formats,
-                // otherwise `response.result` can be directly piped to a file
-                return textToSpeech.repairWavHeaderStream(response.result);
-            })
-            .then(buffer => {
-                fs.writeFileSync('hello_world.wav', buffer);
-            })
-            .catch(err => {
-                console.log('error:', err);
-            });
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContext.destination);
+
+        source.start();
     }
 
     saveComment() {
-        this.setState(
-            { comment: $('#new_comment').text() }
-        )
 
-        console.log(this.state)
+        console.log($('#new_comment').val())
 
         $.ajax({
-            url: 'http://localhost:8080/api/appendcomment/',
-            data: {
-                "comment": this.state.comment
-            },
+            url: 'https://mwau850imi.execute-api.sa-east-1.amazonaws.com/dev/appendcomment',
+            data: JSON.stringify({
+                comment: $('#new_comment').val()
+            }),
             type: 'POST',
             crossDomain: true,
             dataType: 'json',
+            contentType: "application/json",
             success: (success) => {
                 $.ajax({
-                    url: 'http://localhost:8080/api/getcomment/',
+                    url: 'https://mwau850imi.execute-api.sa-east-1.amazonaws.com/dev/getcomment',
                     type: 'GET',
                     crossDomain: true,
                     success: (success) => {
                         console.log(success)
-                        success.forEach(element => {
-                            element.listen = <button onClick={this.listen}>&#x266A;</button>
-                        });
-                        this.setState({
-                            values: success
-                        })
+                        if (success.length > 0) {
+                            success.forEach(element => {
+                                element.listen = <button onClick={(e) => { this.listen(element.comment) }}>&#x266A;</button>
+                            });
+                            this.setState({
+                                values: success
+                            })
+                        }
                     },
                     error: (err) => {
                         console.error(err)
@@ -95,10 +105,10 @@ export default class Comment extends Component {
             <div className="comment" style={{ minWidth: '100%', display: 'inline-block' }}>
                 <h2>Comentário</h2>
                 <div style={{ width: '100%', display: 'block' }}>
-                    <input id='new_comment' type="text" style={{ width: '100%', height: '100%', display: 'block' }} onChange={(event) => { this.setState({ comment: event.target.value }) }}></input>
+                    <input id='new_comment' type="text" style={{ width: '100%', height: '100%', display: 'block' }}></input>
                 </div>
                 <div style={{ width: '100%', display: 'block' }}>
-                    <input type='button' value="Cadastrar" style={{ display: 'block' }} onClick={this.saveComment(event.target.value)}></input>
+                    <input type='button' value="Cadastrar" style={{ display: 'block' }} onClick={(e) => { this.saveComment() }}></input>
                 </div>
                 <div style={{ minWidth: '100%', display: 'inline-grid' }}>
                     <MaterialTable
